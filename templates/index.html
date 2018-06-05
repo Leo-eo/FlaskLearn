@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>标题</title>
+</head>
+<body>
+<h1>
+    我是html内容
+</h1>
+<p> 姓名：{{ username }}</p>
+<p> 年龄：{{ age }}</p>
+<hr>
+{% if user %}
+    <a href="*">{{ user.username }}</a>
+    <a href="*">注销</a>
+{% else %}
+    <a href="*">登录</a>
+    <a href="*">注册</a>
+{% endif %}
+</body>
+</html>
