@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask import request  # 获取参数
 import config
 
 app = Flask(__name__)
@@ -31,26 +32,37 @@ def index():
     return render_template("index.html", **context)
 
 
-@app.route('/register&username=<username>&password=<pwd>')
-def register(username, pwd):
-    # 增加
-    user = User(username=username, password=pwd)
-    db.session.add(user)
-    # 事务
-    db.session.commit()
+@app.route('/register', methods=['get', 'post'])
+def register():
+    username = request.values.get('username')  # 获取参数
+    password = request.values.get('password')
 
+    if username and password:
+        # 增加
+        user = User(username=username, password=password)
+        db.session.add(user)
+        # 事务
+        db.session.commit()
+    else:
+        return create_result(0, '参数错误')
     # "注册成功"
     return create_result(1, '注册成功')
 
 
-# app.route('/login?<username>&<pwd>')
-# ef login(username, pwd):
-#   result = User.query.filter(User.username == username, User.password = pwd).first()
-#
-#   if result is None:
-#       return {"code": 0, "msg": "登录失败"}
-#   else:
-#       return {"code": 0, "msg": "登录成功"}
+@app.route('/login', methods=['get', 'post'])
+def login():
+    username = request.values.get('username')  # 获取参数
+    pwd = request.values.get('password')
+
+    if username and pwd:
+        result = User.query.filter(User.username == username).first()
+
+        if result.password == pwd:
+            return create_result(1, '登录成功')
+        else:
+            return create_result(0, '密码错误')
+    else:
+        return create_result(0, '登录失败')
 
 
 db.create_all()
