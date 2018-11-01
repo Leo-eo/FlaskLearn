@@ -2,7 +2,9 @@ from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask import request  # 获取参数
 import config
+import pymysql
 
+pymysql.install_as_MySQLdb()
 app = Flask(__name__)
 app.config.from_object(config)
 db = SQLAlchemy(app)
@@ -27,7 +29,7 @@ class User(db.Model):
 def index():
     context = {
         "username": "李俊",
-        "age": 23
+        "age": 24
     }
     return render_template("index.html", **context)
 
@@ -67,4 +69,4 @@ def login():
 
 db.create_all()
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000, debug='True')
