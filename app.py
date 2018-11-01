@@ -40,13 +40,17 @@ def register():
     password = request.values.get('password')
 
     if username and password:
-        # 增加
-        user = User(username=username, password=password)
-        db.session.add(user)
-        # 事务
-        db.session.commit()
+        result = User.query.filter(User.username == username).first()
+        if not result:
+            # 增加
+            user = User(username=username, password=password)
+            db.session.add(user)
+            # 事务
+            db.session.commit()
+        else:
+            return create_result(2, '该用户名已存在')
     else:
-        return create_result(0, '参数错误')
+        return create_result(0, '用户名或密码不能为空')
     # "注册成功"
     return create_result(1, '注册成功')
 
@@ -58,13 +62,15 @@ def login():
 
     if username and pwd:
         result = User.query.filter(User.username == username).first()
-
-        if result.password == pwd:
-            return create_result(1, '登录成功')
+        if not result:
+            return create_result(404, '该用户名不存在')
         else:
-            return create_result(0, '密码错误')
+            if result.password == pwd:
+                return create_result(1, '登录成功')
+            else:
+                return create_result(0, '密码错误')
     else:
-        return create_result(0, '登录失败')
+        return create_result(0, '用户名或密码不能为空')
 
 
 db.create_all()
